@@ -2,6 +2,7 @@ import React from "react";
 import { AppUI } from "./AppUI";
 
 
+
 function App() {
 
   const localStorageTodos = localStorage.getItem('TODOS_V1')
@@ -19,13 +20,18 @@ function App() {
   const completedTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchValue.toLowerCase()) && !!todo.completed).length
   const totalTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchValue)).length
 
+  const saveTodos = (newTodos) => {
+    const stringifiedTodos = JSON.stringify(newTodos)
+    localStorage.setItem('TODOS_V1', stringifiedTodos)
+    setTodos(newTodos)
+  }
 
   const completeTodo = (text) => {
     console.log(text)
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos]
     newTodos[todoIndex].completed = true
-    setTodos(newTodos)
+    saveTodos(newTodos)
   }
   
   const deleteTodo = (text) => {
@@ -33,7 +39,7 @@ function App() {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos]
     newTodos.splice([todoIndex], 1)
-    setTodos(newTodos)
+    saveTodos(newTodos)
   }
   
 
