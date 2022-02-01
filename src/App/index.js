@@ -2,29 +2,35 @@ import React from "react";
 import { AppUI } from "./AppUI";
 
 
+function useLocalStorage(itemName, initialValue) {
+  const localStorageItem = localStorage.getItem(itemName)
+  let parsedItem = []
+  if (!localStorageItem) {
+    localStorage.setItem(itemName, JSON.stringify(initialValue))
+    parsedItem = []
+  } else {
+    parsedItem = JSON.parse(localStorageItem)
+  }
+
+  const [item, setItem] = React.useState(parsedItem)
+
+  const saveItem = (newItem) => {
+    const stringifiedItem = JSON.stringify(newItem)
+    localStorage.setItem(itemName, stringifiedItem)
+    setItem(newItem)
+  }
+  return [item, saveItem,]
+}
+
 
 function App() {
 
-  const localStorageTodos = localStorage.getItem('TODOS_V1')
-  let parsedTodos = []
-  if (!localStorageTodos){
-    localStorage.setItem('TODOS_V1', JSON.stringify([]))
-    parsedTodos = []
-  } else {
-    parsedTodos = JSON.parse(localStorageTodos)
-  }
+  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
 
   const [searchValue, setSearchValue] = React.useState('')
-  const [todos, setTodos] = React.useState(parsedTodos)
-  
+
   const completedTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchValue.toLowerCase()) && !!todo.completed).length
   const totalTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchValue)).length
-
-  const saveTodos = (newTodos) => {
-    const stringifiedTodos = JSON.stringify(newTodos)
-    localStorage.setItem('TODOS_V1', stringifiedTodos)
-    setTodos(newTodos)
-  }
 
   const completeTodo = (text) => {
     console.log(text)
@@ -33,7 +39,7 @@ function App() {
     newTodos[todoIndex].completed = true
     saveTodos(newTodos)
   }
-  
+
   const deleteTodo = (text) => {
     console.log(text)
     const todoIndex = todos.findIndex(todo => todo.text === text);
@@ -41,10 +47,10 @@ function App() {
     newTodos.splice([todoIndex], 1)
     saveTodos(newTodos)
   }
-  
+
 
   return (
-    <AppUI 
+    <AppUI
       searchValue={searchValue}
       setSearchValue={setSearchValue}
       todos={todos}
