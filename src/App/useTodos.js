@@ -8,7 +8,8 @@ function useTodos() {
       item: todos,
       saveItem: saveTodos,
       loading,
-      error
+      error,
+      sincronizeItem: sincronizeTodos
    } = useLocalStorage('TODOS_V1', []);
 
    const [searchValue, setSearchValue] = React.useState('')
@@ -43,19 +44,23 @@ function useTodos() {
       saveTodos(newTodos)
    }
 
-   return {
+   const states = {
       loading,
       error,
       searchValue,
-      setSearchValue,
       todos,
       completedTodos,
       totalTodos,
+      openModal,
+   }
+   const updaters = {
+      setSearchValue,
       addTodo,
       completeTodo,
       deleteTodo,
-      openModal,
       setOpenModal,
+      sincronizeTodos,
    }
+   return { states, updaters }
 }
 export { useTodos }

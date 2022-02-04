@@ -11,29 +11,38 @@ import { TodoForm } from "../Modal/TodoForm";
 import { TodosError } from "../TodosError";
 import { TodosLoading } from "../TodosLoading";
 import { EmptyTodos } from "../EmptyTodos";
+import { ChangeAlert } from "../ChangeAlert";
 
 
 
 function App() {
   const {
-    error,
-    loading,
-    todos,
-    completeTodo,
-    deleteTodo,
-    searchValue,
-    setSearchValue,
-    openModal,
-    setOpenModal,
-    addTodo,
-    completedTodos,
-    totalTodos,
+    states, updaters
   } = useTodos()
 
+  const {
+    loading,
+      error,
+      searchValue,
+      todos,
+      completedTodos,
+      totalTodos,
+      openModal,
+  } = states
+
+  const {
+    setSearchValue,
+      addTodo,
+      completeTodo,
+      deleteTodo,
+      setOpenModal,
+      sincronizeTodos,
+  } = updaters
+  
   return (
     <React.Fragment>
 
-      <TodoHeader>
+      <TodoHeader loading={loading}>
         <TodoCounter
           totalTodos={totalTodos}
           completedTodos={completedTodos}
@@ -44,7 +53,7 @@ function App() {
         />
       </TodoHeader>
 
-      <TodoList 
+      <TodoList
         error={error}
         loading={loading}
         todos={todos}
@@ -52,7 +61,18 @@ function App() {
         onError={() => <TodosError />}
         onLoading={() => <TodosLoading />}
         onEmptyTodos={() => <EmptyTodos />}
-        render={todo => (
+        onEmptySearchResult={() => <p>No hay resultados para {searchValue}</p>}
+        // render={todo => (
+        //   <TodoItem
+        //     key={todo.text}
+        //     text={todo.text}
+        //     completed={todo.completed}
+        //     onComplete={() => completeTodo(todo.text)}
+        //     onDelete={() => deleteTodo(todo.text)}
+        //   />
+        // )}
+      >
+        {todo => (
           <TodoItem
             key={todo.text}
             text={todo.text}
@@ -61,8 +81,7 @@ function App() {
             onDelete={() => deleteTodo(todo.text)}
           />
         )}
-      />
-
+      </TodoList>
       {/* <TodoList >
         {error && <TodosError error={error} />}
         {loading && <TodosLoading />}
@@ -79,13 +98,14 @@ function App() {
       </TodoList> */}
       {openModal && (
         <Modal>
-          <TodoForm 
+          <TodoForm
             setOpenModal={setOpenModal}
-            addTodo={addTodo} 
+            addTodo={addTodo}
           />
         </Modal>
       )}
       <CreateTodoButton setOpenModal={setOpenModal} />
+      <ChangeAlert sincronize={sincronizeTodos}/>
     </React.Fragment>
   )
 }
