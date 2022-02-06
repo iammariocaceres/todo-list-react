@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function useLocalStorage(itemName="", initialValue=[]) {
+function useLocalStorage(itemName, initialValue) {
 
 
    const [state, dispatch] = React.useReducer(reducer, initialState({ initialValue }))
